@@ -74,7 +74,7 @@ std::tuple<Result, OutSession<IStorageInterface>> FsMitMService::open_data_stora
     u32 out_domain_id = 0;
     Result rc;
     if (this->romfs_storage != nullptr) {
-        if (this->get_owner() != NULL) {
+        if (this->get_owner() != nullptr) {
             rc = fsOpenDataStorageByCurrentProcessFromDomainFwd(this->forward_service, &out_domain_id);
         } else {
             rc = 0;
@@ -87,7 +87,7 @@ std::tuple<Result, OutSession<IStorageInterface>> FsMitMService::open_data_stora
         FsStorage data_storage;
         FsFile data_file;
 
-        if (this->get_owner() == NULL) {
+        if (this->get_owner() == nullptr) {
             rc = fsOpenDataStorageByCurrentProcessFwd(this->forward_service, &data_storage);
         } else {
             rc = fsOpenDataStorageByCurrentProcessFromDomainFwd(this->forward_service, &out_domain_id);
@@ -124,7 +124,7 @@ std::tuple<Result, OutSession<IStorageInterface>> FsMitMService::open_data_stora
     FsFile data_file;
     u32 out_domain_id = 0;
     Result rc;
-    if (this->get_owner() == NULL) {
+    if (this->get_owner() == nullptr) {
         rc = fsOpenDataStorageByDataId(this->forward_service, storage_id, data_id, &data_storage);
     } else {
         rc = fsOpenDataStorageByDataIdFromDomain(this->forward_service, storage_id, data_id, &out_domain_id);

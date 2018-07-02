@@ -141,7 +141,7 @@ Result Registration::RegisterProcess(u64 pid, u8 *acid_sac, size_t acid_sac_size
         return 0x1215;
     }
     
-    if (proc == NULL) {
+    if (proc == nullptr) {
         return 0x215;
     }
     
@@ -157,7 +157,7 @@ Result Registration::RegisterProcess(u64 pid, u8 *acid_sac, size_t acid_sac_size
 
 Result Registration::UnregisterProcess(u64 pid) {
     Registration::Process *proc = GetProcessForPid(pid);
-    if (proc == NULL) {
+    if (proc == nullptr) {
         return 0x415;
     }
     
@@ -172,7 +172,7 @@ bool Registration::HasService(u64 service) {
 
 Result Registration::GetServiceHandle(u64 pid, u64 service, Handle *out) {
     Registration::Service *target_service = GetService(service);
-    if (target_service == NULL) {
+    if (target_service == nullptr) {
         /* Note: This defers the result until later. */
         return RESULT_DEFER_SESSION;
     }
@@ -237,7 +237,7 @@ Result Registration::GetServiceForPid(u64 pid, u64 service, Handle *out) {
     
     if (!IsInitialProcess(pid)) {
         Registration::Process *proc = GetProcessForPid(pid);
-        if (proc == NULL) {
+        if (proc == nullptr) {
             return 0x415;
         }
         
@@ -263,7 +263,7 @@ Result Registration::RegisterServiceForPid(u64 pid, u64 service, u64 max_session
     
     if (!IsInitialProcess(pid)) {
         Registration::Process *proc = GetProcessForPid(pid);
-        if (proc == NULL) {
+        if (proc == nullptr) {
             return 0x415;
         }
         
@@ -283,7 +283,7 @@ Result Registration::RegisterServiceForPid(u64 pid, u64 service, u64 max_session
 #endif
 
     Registration::Service *free_service = GetFreeService();
-    if (free_service == NULL) {
+    if (free_service == nullptr) {
         return 0xA15;
     }
     
@@ -326,7 +326,7 @@ Result Registration::RegisterServiceForSelf(u64 service, u64 max_sessions, bool 
 #endif
     
     Registration::Service *free_service = GetFreeService();
-    if (free_service == NULL) {
+    if (free_service == nullptr) {
         return 0xA15;
     }
     
@@ -357,7 +357,7 @@ Result Registration::UnregisterServiceForPid(u64 pid, u64 service) {
     }
     
     Registration::Service *target_service = GetService(service);
-    if (target_service == NULL) {
+    if (target_service == nullptr) {
         return 0xE15;
     }
 
@@ -388,7 +388,7 @@ Result Registration::InstallMitmForPid(u64 pid, u64 service, Handle *out, Handle
     /* Verify we're allowed to mitm the service. */
     if (!IsInitialProcess(pid)) {
         Registration::Process *proc = GetProcessForPid(pid);
-        if (proc == NULL) {
+        if (proc == nullptr) {
             return 0x415;
         }
         
@@ -399,7 +399,7 @@ Result Registration::InstallMitmForPid(u64 pid, u64 service, Handle *out, Handle
     
     /* Verify the service exists. */
     Registration::Service *target_service = GetService(service);
-    if (target_service == NULL) {
+    if (target_service == nullptr) {
         return 0xE15;
     }
     
@@ -432,7 +432,7 @@ Result Registration::UninstallMitmForPid(u64 pid, u64 service) {
     }
     
     Registration::Service *target_service = GetService(service);
-    if (target_service == NULL) {
+    if (target_service == nullptr) {
         return 0xE15;
     }
 

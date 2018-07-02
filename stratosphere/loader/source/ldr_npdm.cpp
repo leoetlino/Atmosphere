@@ -30,7 +30,7 @@ FILE *NpdmUtils::OpenNpdmFromSdCard(u64 title_id) {
 
 FILE *NpdmUtils::OpenNpdm(u64 title_id) {
     FILE *f_out = OpenNpdmFromSdCard(title_id);
-    if (f_out != NULL) {
+    if (f_out != nullptr) {
         return f_out;
     }
     return OpenNpdmFromExeFS();
@@ -42,7 +42,7 @@ Result NpdmUtils::LoadNpdm(u64 tid, NpdmInfo *out) {
     g_npdm_cache.info = (const NpdmUtils::NpdmInfo){0};
     
     FILE *f_npdm = OpenNpdm(tid);
-    if (f_npdm == NULL) {
+    if (f_npdm == nullptr) {
         /* For generic "Couldn't open the file" error, just say the file doesn't exist. */
         return 0x202;
     }

@@ -74,7 +74,7 @@ class ISession : public IWaitable {
         Handle get_client_handle() { return this->client_handle; }
         
         
-        DomainOwner *get_owner() { return this->is_domain ? this->domain.get() : NULL; }
+        DomainOwner *get_owner() { return this->is_domain ? this->domain.get() : nullptr; }
         
         /* IWaitable */        
         Handle get_handle() override {
@@ -102,14 +102,14 @@ class ISession : public IWaitable {
             IpcCommand c;
             ipcInitialize(&c);
             
-            if (r.IsDomainMessage && this->active_object == NULL) {
+            if (r.IsDomainMessage && this->active_object == nullptr) {
                 return 0xF601;
             }
            
             
             if (r.IsDomainMessage && r.MessageType == DomainMessageType_Close) {
                 this->domain->delete_object(this->active_object);
-                this->active_object = NULL;
+                this->active_object = nullptr;
                 struct {
                     u64 magic;
                     u64 result;

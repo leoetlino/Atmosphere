@@ -157,7 +157,7 @@ bool CrashReport::IsAddressReadable(u64 address, u64 size, MemoryInfo *o_mi) {
     MemoryInfo mi;
     u32 pi;
     
-    if (o_mi == NULL) {
+    if (o_mi == nullptr) {
         o_mi = &mi;
     }
     
@@ -227,7 +227,7 @@ void CrashReport::SaveReport() {
     /* Open report file. */
     snprintf(report_path, sizeof(report_path) - 1, "sdmc:/atmosphere/crash reports/%011lu_%016lx.log", timestamp, process_info.title_id);
     FILE *f_report = fopen(report_path, "w");
-    if (f_report == NULL) {
+    if (f_report == nullptr) {
         return;
     }
     this->SaveToFile(f_report);

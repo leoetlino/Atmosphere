@@ -106,7 +106,7 @@ int main(int argc, char **argv)
     
     /* Initialize and spawn the Process Tracking thread. */
     Registration::InitializeSystemResources();
-    if (R_FAILED(threadCreate(&process_track_thread, &ProcessTracking::MainLoop, NULL, 0x4000, 0x15, 0))) {
+    if (R_FAILED(threadCreate(&process_track_thread, &ProcessTracking::MainLoop, nullptr, 0x4000, 0x15, 0))) {
         /* TODO: Panic. */
     }
     if (R_FAILED(threadStart(&process_track_thread))) {

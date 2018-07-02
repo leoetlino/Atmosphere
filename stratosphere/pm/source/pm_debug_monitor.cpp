@@ -127,7 +127,7 @@ std::tuple<Result, CopiedHandle> DebugMonitorService::enable_debug_for_applicati
 
 std::tuple<Result, CopiedHandle> DebugMonitorService::get_process_handle(u64 pid) {
     std::shared_ptr<Registration::Process> proc = Registration::GetProcess(pid);
-    if(proc == NULL) {
+    if(proc == nullptr) {
         return {0x20F, 0};
     }
     return {0, proc->handle};

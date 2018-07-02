@@ -149,10 +149,10 @@ struct RomFSBuildDirectoryContext {
     u32 cur_path_ofs;
     u32 path_len;
     u32 entry_offset = 0;
-    RomFSBuildDirectoryContext *parent = NULL;
-    RomFSBuildDirectoryContext *child = NULL;
-    RomFSBuildDirectoryContext *sibling = NULL;
-    RomFSBuildFileContext *file = NULL;
+    RomFSBuildDirectoryContext *parent = nullptr;
+    RomFSBuildDirectoryContext *child = nullptr;
+    RomFSBuildDirectoryContext *sibling = nullptr;
+    RomFSBuildFileContext *file = nullptr;
 };
 
 struct RomFSBuildFileContext {
@@ -162,8 +162,8 @@ struct RomFSBuildFileContext {
     u32 entry_offset = 0;
     u64 offset = 0;
     u64 size = 0;
-    RomFSBuildDirectoryContext *parent = NULL;
-    RomFSBuildFileContext *sibling = NULL;
+    RomFSBuildDirectoryContext *parent = nullptr;
+    RomFSBuildFileContext *sibling = nullptr;
     RomFSDataSource source{0};
     u64 orig_offset = 0;
 };

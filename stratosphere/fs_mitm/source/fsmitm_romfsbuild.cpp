@@ -32,7 +32,7 @@ void RomFSBuildContext::VisitDirectory(FsFileSystem *filesys, RomFSBuildDirector
             strcat(child->path + parent->path_len, "/");
             strcat(child->path + parent->path_len, this->dir_entry.name);
                                     
-            if (!this->AddDirectory(parent, child, NULL)) {
+            if (!this->AddDirectory(parent, child, nullptr)) {
                 delete child->path;
                 delete child;
             } else {
@@ -92,7 +92,7 @@ void RomFSBuildContext::VisitDirectory(RomFSBuildDirectoryContext *parent, u32 p
     RomFSDirectoryEntry *parent_entry = romfs_get_direntry(dir_table, parent_offset);
     if (parent_entry->file != ROMFS_ENTRY_EMPTY) {
         RomFSFileEntry *cur_file = romfs_get_fentry(file_table, parent_entry->file);
-        while (cur_file != NULL) {
+        while (cur_file != nullptr) {
             RomFSBuildFileContext *child = new RomFSBuildFileContext({0});
             /* Set child's path. */
             child->cur_path_ofs = parent->path_len + 1;
@@ -113,7 +113,7 @@ void RomFSBuildContext::VisitDirectory(RomFSBuildDirectoryContext *parent, u32 p
                 delete child;
             }
             if (cur_file->sibling == ROMFS_ENTRY_EMPTY) {
-                cur_file = NULL;
+                cur_file = nullptr;
             } else {
                 cur_file = romfs_get_fentry(file_table, cur_file->sibling);
             }
@@ -122,7 +122,7 @@ void RomFSBuildContext::VisitDirectory(RomFSBuildDirectoryContext *parent, u32 p
     if (parent_entry->child != ROMFS_ENTRY_EMPTY) {
         RomFSDirectoryEntry *cur_child = romfs_get_direntry(dir_table, parent_entry->child);
         u32 cur_child_offset = parent_entry->child;
-        while (cur_child != NULL) {
+        while (cur_child != nullptr) {
             RomFSBuildDirectoryContext *child = new RomFSBuildDirectoryContext({0});
             /* Set child's path. */
             child->cur_path_ofs = parent->path_len + 1;
@@ -135,19 +135,19 @@ void RomFSBuildContext::VisitDirectory(RomFSBuildDirectoryContext *parent, u32 p
             strcat(child->path + parent->path_len, "/");
             strncat(child->path + parent->path_len, cur_child->name, cur_child->name_size);
             
-            RomFSBuildDirectoryContext *real = NULL;
+            RomFSBuildDirectoryContext *real = nullptr;
             if (!this->AddDirectory(parent, child, &real)) {
                 delete child->path;
                 delete child;
             }
-            if (real == NULL) {
+            if (real == nullptr) {
                 fatalSimple(0xF601);
             }
             
             this->VisitDirectory(real, cur_child_offset, dir_table, dir_table_size, file_table, file_table_size);
             
             if (cur_child->sibling == ROMFS_ENTRY_EMPTY) {
-                cur_child = NULL;
+                cur_child = nullptr;
             } else {
                 cur_child_offset = cur_child->sibling;
                 cur_child = romfs_get_direntry(dir_table, cur_child->sibling);
@@ -250,7 +250,7 @@ void RomFSBuildContext::Build(std::vector<RomFSSourceInfo> *out_infos) {
         
     /* Determine file offsets. */
     entry_offset = 0;
-    RomFSBuildFileContext *prev_file = NULL;
+    RomFSBuildFileContext *prev_file = nullptr;
     for (const auto &it : this->files) {
         cur_file = it.second;
         this->file_partition_size = (this->file_partition_size + 0xFULL) & ~0xFULL;
@@ -299,7 +299,7 @@ void RomFSBuildContext::Build(std::vector<RomFSSourceInfo> *out_infos) {
         RomFSFileEntry *cur_entry = romfs_get_fentry(file_table, cur_file->entry_offset);
 
         cur_entry->parent = cur_file->parent->entry_offset;
-        cur_entry->sibling = (cur_file->sibling == NULL) ? ROMFS_ENTRY_EMPTY : cur_file->sibling->entry_offset;
+        cur_entry->sibling = (cur_file->sibling == nullptr) ? ROMFS_ENTRY_EMPTY : cur_file->sibling->entry_offset;
         cur_entry->offset = cur_file->offset;
         cur_entry->size = cur_file->size;
         
@@ -343,9 +343,9 @@ void RomFSBuildContext::Build(std::vector<RomFSSourceInfo> *out_infos) {
         cur_dir = it.second;
         RomFSDirectoryEntry *cur_entry = romfs_get_direntry(dir_table, cur_dir->entry_offset);
         cur_entry->parent = cur_dir == this->root ? 0 : cur_dir->parent->entry_offset;
-        cur_entry->sibling = (cur_dir->sibling == NULL) ? ROMFS_ENTRY_EMPTY : cur_dir->sibling->entry_offset;
-        cur_entry->child = (cur_dir->child == NULL) ? ROMFS_ENTRY_EMPTY : cur_dir->child->entry_offset;
-        cur_entry->file = (cur_dir->file == NULL) ? ROMFS_ENTRY_EMPTY : cur_dir->file->entry_offset;
+        cur_entry->sibling = (cur_dir->sibling == nullptr) ? ROMFS_ENTRY_EMPTY : cur_dir->sibling->entry_offset;
+        cur_entry->child = (cur_dir->child == nullptr) ? ROMFS_ENTRY_EMPTY : cur_dir->child->entry_offset;
+        cur_entry->file = (cur_dir->file == nullptr) ? ROMFS_ENTRY_EMPTY : cur_dir->file->entry_offset;
         
         u32 name_size = cur_dir->path_len - cur_dir->cur_path_ofs;
         u32 hash = romfs_calc_path_hash(cur_dir == this->root ? 0 : cur_dir->parent->entry_offset, (unsigned char *)cur_dir->path + cur_dir->cur_path_ofs, 0, name_size);
@@ -359,7 +359,7 @@ void RomFSBuildContext::Build(std::vector<RomFSSourceInfo> *out_infos) {
         delete cur_dir->path;
         delete cur_dir;
     }
-    this->root = NULL;
+    this->root = nullptr;
     this->directories.clear();
     
     /* Set header fields. */

@@ -24,7 +24,7 @@ class MitMSession final : public ISession<T> {
     bool got_first_message;
         
     public:
-        MitMSession<T>(MitMServer<T> *s, Handle s_h, Handle c_h, const char *srv) : ISession<T>(s, s_h, c_h, NULL, 0), got_first_message(false) {
+        MitMSession<T>(MitMServer<T> *s, Handle s_h, Handle c_h, const char *srv) : ISession<T>(s, s_h, c_h, nullptr, 0), got_first_message(false) {
             this->server = s;
             this->server_handle = s_h;
             this->client_handle = c_h;
@@ -38,7 +38,7 @@ class MitMSession final : public ISession<T> {
             this->service_object = std::make_shared<T>(&forward_service);
             this->pointer_buffer.resize(pointer_buffer_size);
         }
-        MitMSession<T>(MitMServer<T> *s, Handle s_h, Handle c_h, Handle f_h) : ISession<T>(s, s_h, c_h, NULL, 0), got_first_message(true) {
+        MitMSession<T>(MitMServer<T> *s, Handle s_h, Handle c_h, Handle f_h) : ISession<T>(s, s_h, c_h, nullptr, 0), got_first_message(true) {
             this->server = s;
             this->server_handle = s_h;
             this->client_handle = c_h;

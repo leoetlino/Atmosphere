@@ -12,7 +12,7 @@ Result ProcessCreation::InitializeProcessInfo(NpdmUtils::NpdmInfo *npdm, Handle 
     /* Initialize a ProcessInfo using an npdm. */
     *out_proc_info = (const ProcessCreation::ProcessInfo){0};
     
-    /* Copy all but last char of name, insert NULL terminator. */
+    /* Copy all but last char of name, insert nullptr terminator. */
     std::copy(npdm->header->title_name, npdm->header->title_name + sizeof(out_proc_info->name) - 1, out_proc_info->name);
     out_proc_info->name[sizeof(out_proc_info->name) - 1] = 0;
     
@@ -97,7 +97,7 @@ Result ProcessCreation::CreateProcess(Handle *out_process_h, u64 index, char *nc
     
     /* Get the process from the registration queue. */
     target_process = Registration::GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return 0x1009;
     }
     
@@ -144,7 +144,7 @@ Result ProcessCreation::CreateProcess(Handle *out_process_h, u64 index, char *nc
     }
         
     /* Figure out where NSOs will be mapped, and how much space they (and arguments) will take up. */
-    rc = NsoUtils::CalculateNsoLoadExtents(process_info.process_flags, launch_item != NULL ? launch_item->arg_size : 0, &nso_extents);
+    rc = NsoUtils::CalculateNsoLoadExtents(process_info.process_flags, launch_item != nullptr ? launch_item->arg_size : 0, &nso_extents);
     if (R_FAILED(rc)) {
         goto CREATE_PROCESS_END;
     }
@@ -162,10 +162,10 @@ Result ProcessCreation::CreateProcess(Handle *out_process_h, u64 index, char *nc
     
     
     /* Load all NSOs into Process memory, and set permissions accordingly. */
-    if (launch_item != NULL) {
+    if (launch_item != nullptr) {
         rc = NsoUtils::LoadNsosIntoProcessMemory(process_h, npdm_info.aci0->title_id, &nso_extents, (u8 *)launch_item->args, launch_item->arg_size); 
     } else {
-        rc = NsoUtils::LoadNsosIntoProcessMemory(process_h, npdm_info.aci0->title_id, &nso_extents, NULL, 0);    
+        rc = NsoUtils::LoadNsosIntoProcessMemory(process_h, npdm_info.aci0->title_id, &nso_extents, nullptr, 0);    
     }
     if (R_FAILED(rc)) {
         goto CREATE_PROCESS_END;

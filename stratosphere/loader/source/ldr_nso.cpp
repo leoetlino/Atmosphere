@@ -29,7 +29,7 @@ bool NsoUtils::CheckNsoStubbed(unsigned int index, u64 title_id) {
     std::fill(g_nso_path, g_nso_path + FS_MAX_PATH, 0);
     snprintf(g_nso_path, FS_MAX_PATH, "sdmc:/atmosphere/titles/%016lx/exefs/%s.stub", title_id, NsoUtils::GetNsoFileName(index));
     FILE *f = fopen(g_nso_path, "rb");
-    bool ret = (f != NULL);
+    bool ret = (f != nullptr);
     if (ret) {
         fclose(f);
     }
@@ -38,10 +38,10 @@ bool NsoUtils::CheckNsoStubbed(unsigned int index, u64 title_id) {
 
 FILE *NsoUtils::OpenNso(unsigned int index, u64 title_id) {
     FILE *f_out = OpenNsoFromSdCard(index, title_id);
-    if (f_out != NULL) {
+    if (f_out != nullptr) {
         return f_out;
     } else if (CheckNsoStubbed(index, title_id)) {
-        return NULL;
+        return nullptr;
     } else {
         return OpenNsoFromExeFS(index);
     }
@@ -56,7 +56,7 @@ unsigned char *NsoUtils::GetNsoBuildId(unsigned int index) {
     if (g_nso_present[index]) {
         return g_nso_headers[index].build_id;
     }
-    return NULL;
+    return nullptr;
 }
 
 Result NsoUtils::LoadNsoHeaders(u64 title_id) {
@@ -68,13 +68,13 @@ Result NsoUtils::LoadNsoHeaders(u64 title_id) {
     
     for (unsigned int i = 0; i < NSO_NUM_MAX; i++) {
         f_nso = OpenNso(i, title_id);
-        if (f_nso != NULL) {
+        if (f_nso != nullptr) {
             if (fread(&g_nso_headers[i], 1, sizeof(NsoUtils::NsoHeader), f_nso) != sizeof(NsoUtils::NsoHeader)) {
                 return 0xA09;
             }
             g_nso_present[i] = true;
             fclose(f_nso);
-            f_nso = NULL;
+            f_nso = nullptr;
             continue;
         }
         if (1 < i && i < 12) {
@@ -255,7 +255,7 @@ Result NsoUtils::LoadNsosIntoProcessMemory(Handle process_h, u64 title_id, NsoLo
             u8 *map_base = (u8 *)nso_map.GetMappedAddress();
                         
             FILE *f_nso = OpenNso(i, title_id);
-            if (f_nso == NULL) {
+            if (f_nso == nullptr) {
                 /* Is there a better error to return here? */
                 return 0xA09;
             }
@@ -267,7 +267,7 @@ Result NsoUtils::LoadNsosIntoProcessMemory(Handle process_h, u64 title_id, NsoLo
             }
             
             fclose(f_nso);
-            f_nso = NULL;
+            f_nso = nullptr;
             /* Zero out memory before .text. */
             u64 text_base = 0, text_start = g_nso_headers[i].segments[0].dst_offset;
             std::fill(map_base + text_base, map_base + text_start, 0);
@@ -299,7 +299,7 @@ Result NsoUtils::LoadNsosIntoProcessMemory(Handle process_h, u64 title_id, NsoLo
     }
     
     /* Map in arguments. */
-    if (args != NULL && args_size) {
+    if (args != nullptr && args_size) {
         AutoCloseMap args_map;
         if (R_FAILED((rc = args_map.Open(process_h, extents->args_address, extents->args_size)))) {
             return rc;

@@ -5,7 +5,7 @@
 template <typename T>
 class ExistingPortServer : public IServer<T> {    
     public:
-        ExistingPortServer(Handle port_h, unsigned int max_s, bool s_d = false) : IServer<T>(NULL, max_s, s_d) {
+        ExistingPortServer(Handle port_h, unsigned int max_s, bool s_d = false) : IServer<T>(nullptr, max_s, s_d) {
             this->port_handle = port_h;
         }
         

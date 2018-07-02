@@ -4,7 +4,7 @@
 #include "fsmitm_worker.hpp"
 
 /* Owned by g_worker_waiter. */
-static SystemEvent *g_new_waitable_event = NULL;
+static SystemEvent *g_new_waitable_event = nullptr;
 
 static HosMutex g_new_waitable_mutex;
 static HosSemaphore g_sema_new_waitable_finish;

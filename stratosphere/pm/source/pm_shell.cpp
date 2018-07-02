@@ -93,7 +93,7 @@ std::tuple<Result> ShellService::terminate_process_id(u64 pid) {
     auto auto_lock = Registration::GetProcessListUniqueLock();
     
     std::shared_ptr<Registration::Process> proc = Registration::GetProcess(pid);
-    if (proc != NULL) {
+    if (proc != nullptr) {
         return {svcTerminateProcess(proc->handle)};
     } else {
         return {0x20F};
@@ -104,7 +104,7 @@ std::tuple<Result> ShellService::terminate_title_id(u64 tid) {
     auto auto_lock = Registration::GetProcessListUniqueLock();
     
     std::shared_ptr<Registration::Process> proc = Registration::GetProcessByTitleId(tid);
-    if (proc != NULL) {
+    if (proc != nullptr) {
         return {svcTerminateProcess(proc->handle)};
     } else {
         return {0x20F};
@@ -125,7 +125,7 @@ std::tuple<Result> ShellService::finalize_exited_process(u64 pid) {
     auto auto_lock = Registration::GetProcessListUniqueLock();
     
     std::shared_ptr<Registration::Process> proc = Registration::GetProcess(pid);
-    if (proc == NULL) {
+    if (proc == nullptr) {
         return {0x20F};
     } else if (proc->state != ProcessState_Exited) {
         return {0x60F};
@@ -139,7 +139,7 @@ std::tuple<Result> ShellService::clear_process_notification_flag(u64 pid) {
     auto auto_lock = Registration::GetProcessListUniqueLock();
     
     std::shared_ptr<Registration::Process> proc = Registration::GetProcess(pid);
-    if (proc != NULL) {
+    if (proc != nullptr) {
         proc->flags &= ~2;
         return {0x0};
     } else {

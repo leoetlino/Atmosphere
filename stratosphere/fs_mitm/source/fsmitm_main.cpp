@@ -92,7 +92,7 @@ int main(int argc, char **argv)
     Thread worker_thread = {0};
     consoleDebugInit(debugDevice_SVC);
     
-    if (R_FAILED(threadCreate(&worker_thread, &FsMitMWorker::Main, NULL, 0x20000, 45, 0))) {
+    if (R_FAILED(threadCreate(&worker_thread, &FsMitMWorker::Main, nullptr, 0x20000, 45, 0))) {
         /* TODO: Panic. */
     }
     if (R_FAILED(threadStart(&worker_thread))) {

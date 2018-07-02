@@ -63,7 +63,7 @@ class AutoCloseMap {
                 if (R_FAILED(svcUnmapProcessMemory(this->mapped_address, this->process_handle, this->base_address, this->size))) {
                     /* TODO: panic(). */
                 }
-                this->mapped_address = NULL;
+                this->mapped_address = nullptr;
             }
         }
 };
@@ -80,7 +80,7 @@ struct MappedCodeMemory {
     }
     
     bool IsMapped() {
-        return this->mapped_address != NULL;
+        return this->mapped_address != nullptr;
     }
     
     /* Utility functions. */
@@ -141,7 +141,7 @@ struct MappedCodeMemory {
                 /* TODO: panic(). */
             }
         }
-        this->mapped_address = NULL;
+        this->mapped_address = nullptr;
     }
     
     void Close() {

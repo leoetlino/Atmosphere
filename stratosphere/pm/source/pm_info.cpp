@@ -25,7 +25,7 @@ std::tuple<Result, u64> InformationService::get_title_id(u64 pid) {
     auto auto_lock = Registration::GetProcessListUniqueLock();
     
     std::shared_ptr<Registration::Process> proc = Registration::GetProcess(pid);
-    if (proc != NULL) {
+    if (proc != nullptr) {
         return {0x0, proc->tid_sid.title_id};
     } else {
         return {0x20F, 0x0};

@@ -12,7 +12,7 @@ class IPCSession final : public ISession<T> {
     static_assert(std::is_base_of<IServiceObject, T>::value, "Service Objects must derive from IServiceObject");
     
     public:
-        IPCSession<T>(size_t pbs = 0x400) : ISession<T>(NULL, 0, 0, 0) {
+        IPCSession<T>(size_t pbs = 0x400) : ISession<T>(nullptr, 0, 0, 0) {
             Result rc;
             if (R_FAILED((rc = svcCreateSession(&this->server_handle, &this->client_handle, 0, 0)))) {
                 fatalSimple(rc);
@@ -21,7 +21,7 @@ class IPCSession final : public ISession<T> {
             this->pointer_buffer.resize(pbs);
         }
         
-        IPCSession<T>(std::shared_ptr<T> so, size_t pbs = 0x400) : ISession<T>(NULL, 0, 0, so, 0) {
+        IPCSession<T>(std::shared_ptr<T> so, size_t pbs = 0x400) : ISession<T>(nullptr, 0, 0, so, 0) {
             Result rc;
             if (R_FAILED((rc = svcCreateSession(&this->server_handle, &this->client_handle, 0, 0)))) {
                 fatalSimple(rc);

@@ -38,7 +38,7 @@ Result RelocatableObjectsService::dispatch(IpcParsedCommand &r, IpcCommand &out_
 std::tuple<Result, u64> RelocatableObjectsService::load_nro(PidDescriptor pid_desc, u64 nro_address, u64 nro_size, u64 bss_address, u64 bss_size) {
     Result rc;
     u64 out_address = 0;
-    Registration::Process *target_proc = NULL;
+    Registration::Process *target_proc = nullptr;
     if (!this->has_initialized || this->process_id != pid_desc.pid) {
         rc = 0xAE09;
         goto LOAD_NRO_END;
@@ -61,7 +61,7 @@ std::tuple<Result, u64> RelocatableObjectsService::load_nro(PidDescriptor pid_de
         goto LOAD_NRO_END;
     }
     target_proc = Registration::GetProcessByProcessId(pid_desc.pid);
-    if (target_proc == NULL || (target_proc->owner_ro_service != NULL && (RelocatableObjectsService *)(target_proc->owner_ro_service) != this)) {
+    if (target_proc == nullptr || (target_proc->owner_ro_service != NULL && (RelocatableObjectsService *)(target_proc->owner_ro_service) != this)) {
         rc = 0xAC09;
         goto LOAD_NRO_END;
     }
@@ -73,7 +73,7 @@ LOAD_NRO_END:
 }
 
 std::tuple<Result> RelocatableObjectsService::unload_nro(PidDescriptor pid_desc, u64 nro_address) {
-    Registration::Process *target_proc = NULL;
+    Registration::Process *target_proc = nullptr;
     if (!this->has_initialized || this->process_id != pid_desc.pid) {
         return 0xAE09;
     }
@@ -82,7 +82,7 @@ std::tuple<Result> RelocatableObjectsService::unload_nro(PidDescriptor pid_desc,
     }
     
     target_proc = Registration::GetProcessByProcessId(pid_desc.pid);
-    if (target_proc == NULL || (target_proc->owner_ro_service != NULL && (RelocatableObjectsService *)(target_proc->owner_ro_service) != this)) {
+    if (target_proc == nullptr || (target_proc->owner_ro_service != NULL && (RelocatableObjectsService *)(target_proc->owner_ro_service) != this)) {
         return 0xAC09;
     }
     target_proc->owner_ro_service = this;
@@ -92,7 +92,7 @@ std::tuple<Result> RelocatableObjectsService::unload_nro(PidDescriptor pid_desc,
 
 std::tuple<Result> RelocatableObjectsService::load_nrr(PidDescriptor pid_desc, u64 nrr_address, u64 nrr_size) {
     Result rc;
-    Registration::Process *target_proc = NULL;
+    Registration::Process *target_proc = nullptr;
     MappedCodeMemory nrr_info = {0};
     
     if (!this->has_initialized || this->process_id != pid_desc.pid) {
@@ -109,7 +109,7 @@ std::tuple<Result> RelocatableObjectsService::load_nrr(PidDescriptor pid_desc, u
     }
     
     target_proc = Registration::GetProcessByProcessId(pid_desc.pid);
-    if (target_proc == NULL || (target_proc->owner_ro_service != NULL && (RelocatableObjectsService *)(target_proc->owner_ro_service) != this)) {
+    if (target_proc == nullptr || (target_proc->owner_ro_service != NULL && (RelocatableObjectsService *)(target_proc->owner_ro_service) != this)) {
         rc = 0xAC09;
         goto LOAD_NRR_END;
     }
@@ -138,7 +138,7 @@ LOAD_NRR_END:
 }
 
 std::tuple<Result> RelocatableObjectsService::unload_nrr(PidDescriptor pid_desc, u64 nrr_address) {
-    Registration::Process *target_proc = NULL;
+    Registration::Process *target_proc = nullptr;
     if (!this->has_initialized || this->process_id != pid_desc.pid) {
         return 0xAE09;
     }
@@ -147,7 +147,7 @@ std::tuple<Result> RelocatableObjectsService::unload_nrr(PidDescriptor pid_desc,
     }
     
     target_proc = Registration::GetProcessByProcessId(pid_desc.pid);
-    if (target_proc == NULL || (target_proc->owner_ro_service != NULL && (RelocatableObjectsService *)(target_proc->owner_ro_service) != this)) {
+    if (target_proc == nullptr || (target_proc->owner_ro_service != NULL && (RelocatableObjectsService *)(target_proc->owner_ro_service) != this)) {
         return 0xAC09;
     }
     target_proc->owner_ro_service = this;

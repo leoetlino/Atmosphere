@@ -8,13 +8,13 @@ class DomainOwner;
 
 class IServiceObject {
     private:
-        DomainOwner *owner = NULL;
+        DomainOwner *owner = nullptr;
     public:
         virtual ~IServiceObject() { }
         
         virtual IServiceObject *clone() = 0;
         
-        bool is_domain() { return this->owner != NULL; }
+        bool is_domain() { return this->owner != nullptr; }
         DomainOwner *get_owner() { return this->owner; }
         void set_owner(DomainOwner *owner) { this->owner = owner; }
         virtual Result dispatch(IpcParsedCommand &r, IpcCommand &out_c, u64 cmd_id, u8 *pointer_buffer, size_t pointer_buffer_size) = 0;

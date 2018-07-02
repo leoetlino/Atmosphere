@@ -302,7 +302,7 @@ LZ4LIB_API int                 LZ4_freeStreamDecode (LZ4_streamDecode_t* LZ4_str
 /*! LZ4_setStreamDecode() :
  *  An LZ4_streamDecode_t structure can be allocated once and re-used multiple times.
  *  Use this function to start decompression of a new stream of blocks.
- *  A dictionary can optionnally be set. Use NULL or size 0 for a reset order.
+ *  A dictionary can optionnally be set. Use nullptr or size 0 for a reset order.
  * @return : 1 if OK, 0 if error
  */
 LZ4LIB_API int LZ4_setStreamDecode (LZ4_streamDecode_t* LZ4_streamDecode, const char* dictionary, int dictSize);
@@ -400,7 +400,7 @@ LZ4LIB_API int LZ4_compress_fast_extState_fastReset (void* state, const char* sr
  *  Currently, only streams which have been prepared by LZ4_loadDict() should
  *  be expected to work.
  *
- *  Alternatively, the provided dictionary stream pointer may be NULL, in which
+ *  Alternatively, the provided dictionary stream pointer may be nullptr, in which
  *  case any existing dictionary stream is unset.
  *
  *  If a dictionary is provided, it replaces any pre-existing stream history.

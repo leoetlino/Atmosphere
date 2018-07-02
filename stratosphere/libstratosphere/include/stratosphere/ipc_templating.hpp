@@ -260,11 +260,11 @@ template <typename T>
 bool ValidateIpcParsedCommandArgument(IpcParsedCommand& r, size_t& cur_rawdata_index, size_t& cur_c_size_offset, size_t& a_index, size_t& b_index, size_t& x_index, size_t& c_index, size_t& h_index, size_t& total_c_size) {
     const size_t old_c_size_offset = cur_c_size_offset;
     if constexpr (std::is_base_of<InBufferBase, T>::value) {
-        return r.Buffers[a_index] != NULL && r.BufferDirections[a_index] == BufferDirection_Send && r.BufferTypes[a_index++] == T::expected_type;
+        return r.Buffers[a_index] != nullptr && r.BufferDirections[a_index] == BufferDirection_Send && r.BufferTypes[a_index++] == T::expected_type;
     } else if constexpr (std::is_base_of<OutBufferBase, T>::value) {
-        return r.Buffers[b_index] != NULL && r.BufferDirections[b_index] == BufferDirection_Recv && r.BufferTypes[b_index++] == T::expected_type;
+        return r.Buffers[b_index] != nullptr && r.BufferDirections[b_index] == BufferDirection_Recv && r.BufferTypes[b_index++] == T::expected_type;
     } else if constexpr (is_specialization_of<T, InPointer>::value) {
-        return r.Statics[x_index] != NULL;
+        return r.Statics[x_index] != nullptr;
     } else if constexpr (std::is_base_of<OutPointerWithServerSizeBase, T>::value) {
         total_c_size += T::num_elements;
         return true;
@@ -439,7 +439,7 @@ struct Encoder<std::tuple<Args...>> {
             u64 magic;
             u64 result;
         } *raw;
-        if (domain_owner == NULL) {
+        if (domain_owner == nullptr) {
             raw = (decltype(raw))ipcPrepareHeader(&out_command, sizeof(*raw) + size_in_raw_data_for_arguments<Args... >::value - sizeof(Result));
         } else {
             raw = (decltype(raw))ipcPrepareHeaderForDomain(&out_command, sizeof(*raw) + size_in_raw_data_for_arguments<Args... >::value + (num_out_sessions_in_arguments<Args... >::value * sizeof(u32)) - sizeof(Result), 0);
@@ -485,7 +485,7 @@ Result WrapDeferredIpcCommandImpl(Class *this_ptr, Args... args) {
     auto tuple_args = std::make_tuple(args...);
     auto result = std::apply( [=](auto&&... a) { return (this_ptr->*IpcCommandImpl)(a...); }, tuple_args);
     
-    DomainOwner *down = NULL;
+    DomainOwner *down = nullptr;
     
     return std::apply(Encoder<OutArgs>{out_command}, std::tuple_cat(std::make_tuple(down), result));
 }
@@ -509,7 +509,7 @@ Result WrapIpcCommandImpl(Class *this_ptr, IpcParsedCommand& r, IpcCommand &out_
 
     auto args = Decoder<OutArgs, InArgsWithoutThis>::Decode(r, out_command, pointer_buffer);    
     auto result = std::apply( [=](auto&&... args) { return (this_ptr->*IpcCommandImpl)(args...); }, args);
-    DomainOwner *down = NULL;
+    DomainOwner *down = nullptr;
     if (r.IsDomainMessage) {
         down = this_ptr->get_owner();
     }
@@ -535,7 +535,7 @@ Result WrapStaticIpcCommandImpl(IpcParsedCommand& r, IpcCommand &out_command, u8
 
     auto args = Decoder<OutArgs, InArgs>::Decode(r, out_command, pointer_buffer);    
     auto result = std::apply(IpcCommandImpl, args);
-    DomainOwner *down = NULL;
+    DomainOwner *down = nullptr;
     
     return std::apply(Encoder<OutArgs>{out_command}, std::tuple_cat(std::make_tuple(down), result));
 }

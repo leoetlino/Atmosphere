@@ -23,7 +23,7 @@ Registration::Process *Registration::GetProcess(u64 index) {
             return &g_registration_list.processes[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 Registration::Process *Registration::GetProcessByProcessId(u64 pid) {
@@ -32,7 +32,7 @@ Registration::Process *Registration::GetProcessByProcessId(u64 pid) {
             return &g_registration_list.processes[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 Registration::Process *Registration::GetProcessByRoService(void *service) {
@@ -41,12 +41,12 @@ Registration::Process *Registration::GetProcessByRoService(void *service) {
             return &g_registration_list.processes[i];
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 bool Registration::RegisterTidSid(const TidSid *tid_sid, u64 *out_index) { 
     Registration::Process *free_process = GetFreeProcess();
-    if (free_process == NULL) {
+    if (free_process == nullptr) {
         return false;
     }
     
@@ -61,7 +61,7 @@ bool Registration::RegisterTidSid(const TidSid *tid_sid, u64 *out_index) {
 
 bool Registration::UnregisterIndex(u64 index) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return false;
     }
     
@@ -73,7 +73,7 @@ bool Registration::UnregisterIndex(u64 index) {
 
 Result Registration::GetRegisteredTidSid(u64 index, Registration::TidSid *out) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return 0x1009;
     }
     
@@ -84,7 +84,7 @@ Result Registration::GetRegisteredTidSid(u64 index, Registration::TidSid *out) {
 
 void Registration::SetProcessIdTidAndIs64BitAddressSpace(u64 index, u64 process_id, u64 tid, bool is_64_bit_addspace) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return;
     }
     
@@ -95,7 +95,7 @@ void Registration::SetProcessIdTidAndIs64BitAddressSpace(u64 index, u64 process_
 
 void Registration::AddNsoInfo(u64 index, u64 base_address, u64 size, const unsigned char *build_id) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return;
     }
 
@@ -110,7 +110,7 @@ void Registration::AddNsoInfo(u64 index, u64 base_address, u64 size, const unsig
 
 void Registration::CloseRoService(void *service, Handle process_h) {
     Registration::Process *target_process = GetProcessByRoService(service);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return;
     }
     for (unsigned int i = 0; i < NRR_INFO_MAX; i++) {
@@ -118,12 +118,12 @@ void Registration::CloseRoService(void *service, Handle process_h) {
             target_process->nrr_infos[i].Close();
         }
     }
-    target_process->owner_ro_service = NULL;
+    target_process->owner_ro_service = nullptr;
 }
 
 Result Registration::AddNrrInfo(u64 index, MappedCodeMemory *nrr_info) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         /* TODO: panic() */
         return 0x7009;
     }
@@ -138,7 +138,7 @@ Result Registration::AddNrrInfo(u64 index, MappedCodeMemory *nrr_info) {
 
 Result Registration::RemoveNrrInfo(u64 index, u64 base_address) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         /* Despite the fact that this should really be a panic condition, Nintendo returns 0x1009 in this case. */
         return 0x1009;
     }
@@ -155,7 +155,7 @@ Result Registration::RemoveNrrInfo(u64 index, u64 base_address) {
 
 bool Registration::IsNroHashPresent(u64 index, u8 *nro_hash) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         /* TODO: panic */
         return false;
     }
@@ -184,7 +184,7 @@ bool Registration::IsNroHashPresent(u64 index, u8 *nro_hash) {
 
 bool Registration::IsNroAlreadyLoaded(u64 index, u8 *build_id) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         /* TODO: panic */
         return true;
     }
@@ -199,7 +199,7 @@ bool Registration::IsNroAlreadyLoaded(u64 index, u8 *build_id) {
 
 void Registration::AddNroToProcess(u64 index, MappedCodeMemory *nro, MappedCodeMemory *bss, u32 text_size, u32 ro_size, u32 rw_size, u8 *build_id) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         /* TODO: panic */
         return;
     }
@@ -221,7 +221,7 @@ void Registration::AddNroToProcess(u64 index, MappedCodeMemory *nro, MappedCodeM
 
 Result Registration::RemoveNroInfo(u64 index, Handle process_h, u64 nro_heap_address) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return 0xA809;
     }
     
@@ -244,7 +244,7 @@ Result Registration::RemoveNroInfo(u64 index, Handle process_h, u64 nro_heap_add
 
 Result Registration::GetNsoInfosForProcessId(Registration::NsoInfo *out, u32 max_out, u64 process_id, u32 *num_written) {
     Registration::Process *target_process = GetProcessByProcessId(process_id);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return 0x1009;
     }
     u32 cur = 0;
@@ -262,7 +262,7 @@ Result Registration::GetNsoInfosForProcessId(Registration::NsoInfo *out, u32 max
 
 void Registration::AssociatePidTidForMitM(u64 index) {
     Registration::Process *target_process = GetProcess(index);
-    if (target_process == NULL) {
+    if (target_process == nullptr) {
         return;
     }
     

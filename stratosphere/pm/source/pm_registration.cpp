@@ -10,7 +10,7 @@ static ProcessList g_process_list;
 static ProcessList g_dead_process_list;
 
 /* Owned by the process list waitable manager. */
-static SystemEvent *g_process_launch_start_event = NULL;
+static SystemEvent *g_process_launch_start_event = nullptr;
 static HosSemaphore g_sema_finish_launch;
 
 static HosMutex g_process_launch_mutex;
@@ -19,9 +19,9 @@ static Registration::ProcessLaunchState g_process_launch_state;
 static std::atomic_bool g_debug_next_application(false);
 static std::atomic<u64> g_debug_on_launch_tid(0);
 
-static SystemEvent *g_process_event = NULL;
-static SystemEvent *g_debug_title_event = NULL;
-static SystemEvent *g_debug_application_event = NULL;
+static SystemEvent *g_process_event = nullptr;
+static SystemEvent *g_debug_title_event = nullptr;
+static SystemEvent *g_debug_application_event = nullptr;
 
 std::unique_lock<HosRecursiveMutex> Registration::GetProcessListUniqueLock() {
     return g_process_list.get_unique_lock();
@@ -32,10 +32,10 @@ void Registration::SetProcessListManager(WaitableManager *m) {
 }
 
 void Registration::InitializeSystemResources() {
-    g_process_event = new SystemEvent(NULL, &IEvent::PanicCallback);
-    g_debug_title_event = new SystemEvent(NULL, &IEvent::PanicCallback);
-    g_debug_application_event = new SystemEvent(NULL, &IEvent::PanicCallback);
-    g_process_launch_start_event = new SystemEvent(NULL, &Registration::ProcessLaunchStartCallback);
+    g_process_event = new SystemEvent(nullptr, &IEvent::PanicCallback);
+    g_debug_title_event = new SystemEvent(nullptr, &IEvent::PanicCallback);
+    g_debug_application_event = new SystemEvent(nullptr, &IEvent::PanicCallback);
+    g_process_launch_start_event = new SystemEvent(nullptr, &Registration::ProcessLaunchStartCallback);
     
     ResourceLimitUtils::InitializeLimits();
 }
@@ -67,7 +67,7 @@ void Registration::HandleProcessLaunch() {
     }
         
     /* Get the resource limit handle, ensure that we can launch the program. */
-    if ((program_info.application_type & 3) == 1 && HasApplicationProcess(NULL)) {
+    if ((program_info.application_type & 3) == 1 && HasApplicationProcess(nullptr)) {
         rc = 0xA0F;
         goto HANDLE_PROCESS_LAUNCH_END;
     }
@@ -176,7 +176,7 @@ Result Registration::LaunchDebugProcess(u64 pid) {
     Result rc;
     
     std::shared_ptr<Registration::Process> proc = GetProcess(pid);
-    if (proc == NULL) {
+    if (proc == nullptr) {
         return 0x20F;
     }
     

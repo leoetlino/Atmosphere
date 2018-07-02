@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
         return 0;
     }
     for (int i = 0; i < argc; i++) {
-        if (argv[i] == NULL) {
+        if (argv[i] == nullptr) {
             return 0;
         }
     }

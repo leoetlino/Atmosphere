@@ -136,24 +136,24 @@ int main(int argc, char **argv)
     /* This is to launch things required for Loader to mount SD card ASAP. */
     
     /* Launch psc. */
-    LaunchTitle(0x0100000000000021, 3, 0, NULL);
+    LaunchTitle(0x0100000000000021, 3, 0, nullptr);
     /* Launch bus. */
-    LaunchTitle(0x010000000000000A, 3, 0, NULL);
+    LaunchTitle(0x010000000000000A, 3, 0, nullptr);
     /* Launch pcv. */
-    LaunchTitle(0x010000000000001A, 3, 0, NULL);
+    LaunchTitle(0x010000000000001A, 3, 0, nullptr);
     /* Launch settings. */
-    LaunchTitle(0x0100000000000009, 3, 0, NULL);
+    LaunchTitle(0x0100000000000009, 3, 0, nullptr);
     /* Launch usb. */
-    LaunchTitle(0x0100000000000006, 3, 0, NULL);
+    LaunchTitle(0x0100000000000006, 3, 0, nullptr);
     /* Launch pcie. */
-    LaunchTitle(0x010000000000001D, 3, 0, NULL);
+    LaunchTitle(0x010000000000001D, 3, 0, nullptr);
     /* Launch tma. */
-    LaunchTitle(0x0100000000000007, 3, 0, NULL);
+    LaunchTitle(0x0100000000000007, 3, 0, nullptr);
     
     bool maintenance = ShouldForceMaintenanceMode();
     for (auto &launch_program : g_additional_launch_programs) {
         if (!maintenance || std::get<bool>(launch_program)) {
-            LaunchTitle(std::get<u64>(launch_program), 3, 0, NULL);
+            LaunchTitle(std::get<u64>(launch_program), 3, 0, nullptr);
         }
     }
        

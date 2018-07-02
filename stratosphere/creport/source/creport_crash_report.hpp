@@ -47,7 +47,7 @@ class CrashReport {
         void BuildReport(u64 pid, bool has_extra_info);
         void SaveReport();
         
-        bool IsAddressReadable(u64 address, u64 size, MemoryInfo *mi = NULL);
+        bool IsAddressReadable(u64 address, u64 size, MemoryInfo *mi = nullptr);
         
         static void Memdump(FILE *f, const char *prefix, const void *data, size_t size);
         
