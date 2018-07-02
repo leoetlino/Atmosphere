@@ -1,6 +1,7 @@
 #pragma once
 #include <switch.h>
 #include <algorithm>
+#include <memory>
 #include <type_traits>
 
 #include "iserviceobject.hpp"
@@ -29,7 +30,7 @@ class IServer : public IWaitable {
             }
         }
         
-        virtual ISession<T> *get_new_session(Handle session_h) = 0;
+        virtual std::unique_ptr<ISession<T>> get_new_session(Handle session_h) = 0;
     
         /* IWaitable */                        
         virtual Handle get_handle() {

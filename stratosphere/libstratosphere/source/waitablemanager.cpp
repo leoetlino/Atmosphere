@@ -2,13 +2,14 @@
 
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <mutex>
 
 #include <stratosphere/waitablemanager.hpp>
 
-void WaitableManager::add_waitable(IWaitable *waitable) {
+void WaitableManager::add_waitable(std::unique_ptr<IWaitable> waitable) {
     std::scoped_lock lk{this->lock};
-    this->to_add_waitables.push_back(waitable);
+    this->to_add_waitables.push_back(std::move(waitable));
     waitable->set_manager(this);
     this->has_new_items = true;
 }
@@ -23,7 +24,7 @@ void WaitableManager::process_internal(bool break_on_timeout) {
         /* Add new items, if relevant. */
         if (this->has_new_items) {
             std::scoped_lock lk{this->lock};
-            this->waitables.insert(this->waitables.end(), this->to_add_waitables.begin(), this->to_add_waitables.end());
+            this->waitables.insert(this->waitables.end(), std::make_move_iterator(this->to_add_waitables.begin()), std::make_move_iterator(this->to_add_waitables.end()));
             this->to_add_waitables.clear();
             this->has_new_items = false;
         }
@@ -33,7 +34,7 @@ void WaitableManager::process_internal(bool break_on_timeout) {
         
         /* Copy out handles. */
         handles.resize(this->waitables.size());
-        std::transform(this->waitables.begin(), this->waitables.end(), handles.begin(), [](IWaitable *w) { return w->get_handle(); });
+        std::transform(this->waitables.begin(), this->waitables.end(), handles.begin(), [](const auto &w) { return w->get_handle(); });
         
         
         rc = svcWaitSynchronization(&handle_index, handles.data(), this->waitables.size(), this->timeout);
@@ -60,14 +61,9 @@ void WaitableManager::process_internal(bool break_on_timeout) {
             /* Close the handle. */
             svcCloseHandle(handles[handle_index]);
             
-            IWaitable  *to_delete = this->waitables[handle_index];
-            
             /* If relevant, remove from waitables. */
             this->waitables.erase(this->waitables.begin() + handle_index);
             
-            /* Delete it. */
-            delete to_delete;
-                        
             std::for_each(waitables.begin(), waitables.begin() + handle_index, std::mem_fn(&IWaitable::update_priority));
         }
         

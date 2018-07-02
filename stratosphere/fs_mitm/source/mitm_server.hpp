@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <switch.h>
 #include <stratosphere.hpp>
 
@@ -18,7 +19,7 @@ class MitMServer final : public IServer<T> {
         char mitm_name[9];
     
     public:
-        MitMServer(ISession<MitMQueryService<T>> **out_query_session, const char *service_name, unsigned int max_s, bool s_d = false) : IServer<T>(service_name, max_s, s_d) {
+        MitMServer(std::unique_ptr<ISession<MitMQueryService<T>>>* out_query_session, const char *service_name, unsigned int max_s, bool s_d = false) : IServer<T>(service_name, max_s, s_d) {
             Handle tmp_hnd;
             Handle out_query_h;
             Result rc;
@@ -33,7 +34,7 @@ class MitMServer final : public IServer<T> {
             if (R_FAILED((rc = smMitMInstall(&this->port_handle, &out_query_h, mitm_name)))) {
                 fatalSimple(rc);           
             }
-            *out_query_session = new ServiceSession<MitMQueryService<T>>(NULL, out_query_h, 0);
+            *out_query_session = std::make_unique<ServiceSession<MitMQueryService<T>>>(nullptr, out_query_h, 0);
         }
         
         virtual ~MitMServer() {
@@ -45,8 +46,8 @@ class MitMServer final : public IServer<T> {
             }
         }
         
-        ISession<T> *get_new_session(Handle session_h) override {
-            return new MitMSession<T>(this, session_h, 0, mitm_name);
+        std::unique_ptr<ISession<T>> get_new_session(Handle session_h) override {
+            return std::make_unique<MitMSession<T>>(this, session_h, 0, mitm_name);
         }
 };
 

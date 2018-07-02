@@ -11,7 +11,7 @@ class ServiceServer : public IServer<T> {
             }
         }
         
-        ISession<T> *get_new_session(Handle session_h) override {
-            return new ServiceSession<T>(this, session_h, 0);
+        std::unique_ptr<ISession<T>> get_new_session(Handle session_h) override {
+            return std::make_unique<ServiceSession<T>>(this, session_h, 0);
         }
 };

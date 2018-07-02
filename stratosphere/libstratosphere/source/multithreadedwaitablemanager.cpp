@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <mutex>
 
 #include <stratosphere/multithreadedwaitablemanager.hpp>
@@ -20,15 +21,15 @@ void MultiThreadedWaitableManager::process_until_timeout() {
     /* TODO: Panic. */
 }
 
-void MultiThreadedWaitableManager::add_waitable(IWaitable *waitable) {
+void MultiThreadedWaitableManager::add_waitable(std::unique_ptr<IWaitable> waitable) {
     std::scoped_lock lk{this->lock};
-    this->to_add_waitables.push_back(waitable);
+    this->to_add_waitables.push_back(std::move(waitable));
     waitable->set_manager(this);
     this->new_waitable_event->signal_event();
 }
 
 
-IWaitable *MultiThreadedWaitableManager::get_waitable() {
+std::unique_ptr<IWaitable> MultiThreadedWaitableManager::get_waitable() {
     std::vector<Handle> handles;
     
     int handle_index = 0;
@@ -40,12 +41,14 @@ IWaitable *MultiThreadedWaitableManager::get_waitable() {
         
         /* Copy out handles. */
         handles.resize(this->waitables.size());
-        std::transform(this->waitables.begin(), this->waitables.end(), handles.begin(), [](IWaitable *w) { return w->get_handle(); });
+        std::transform(this->waitables.begin(), this->waitables.end(), handles.begin(), [](const auto &w) { return w->get_handle(); });
         
         rc = svcWaitSynchronization(&handle_index, handles.data(), this->waitables.size(), this->timeout);
-        IWaitable *w = this->waitables[handle_index];
+        std::unique_ptr<IWaitable> w;
         if (R_SUCCEEDED(rc)) {
             std::for_each(waitables.begin(), waitables.begin() + handle_index, std::mem_fn(&IWaitable::update_priority));
+            /* Keep the waitable around, but remove it from this->waitables. */
+            w = std::move(this->waitables[handle_index]);
             this->waitables.erase(this->waitables.begin() + handle_index);
         } else if (rc == 0xEA01) {
             /* Timeout. */
@@ -55,7 +58,6 @@ IWaitable *MultiThreadedWaitableManager::get_waitable() {
         } else {
             std::for_each(waitables.begin(), waitables.begin() + handle_index, std::mem_fn(&IWaitable::update_priority));
             this->waitables.erase(this->waitables.begin() + handle_index);
-            delete w;
         }
         
         /* Do deferred callback for each waitable. */
@@ -67,9 +69,9 @@ IWaitable *MultiThreadedWaitableManager::get_waitable() {
         
         /* Return waitable. */
         if (R_SUCCEEDED(rc)) {
-            if (w == this->new_waitable_event) {
+            if (w.get() == this->new_waitable_event) {
                 w->handle_signaled(0);
-                this->waitables.push_back(w);
+                this->waitables.push_back(std::move(w));
             } else {
                 return w;
             }
@@ -81,7 +83,7 @@ Result MultiThreadedWaitableManager::add_waitable_callback(void *arg, Handle *ha
     MultiThreadedWaitableManager *this_ptr = (MultiThreadedWaitableManager *)arg;
     svcClearEvent(handles[0]);
     std::scoped_lock lk{this_ptr->lock};
-    this_ptr->waitables.insert(this_ptr->waitables.end(), this_ptr->to_add_waitables.begin(), this_ptr->to_add_waitables.end());
+    this_ptr->waitables.insert(this_ptr->waitables.end(), std::make_move_iterator(this_ptr->to_add_waitables.begin()), std::make_move_iterator(this_ptr->to_add_waitables.end()));
     this_ptr->to_add_waitables.clear();
     return 0;
 }
@@ -89,14 +91,13 @@ Result MultiThreadedWaitableManager::add_waitable_callback(void *arg, Handle *ha
 void MultiThreadedWaitableManager::thread_func(void *t) {
     MultiThreadedWaitableManager *this_ptr = (MultiThreadedWaitableManager *)t;
     while (1) {
-        IWaitable *w = this_ptr->get_waitable();
+        std::unique_ptr<IWaitable> w = this_ptr->get_waitable();
         if (w) {
             Result rc = w->handle_signaled(0);
             if (rc == 0xF601) {
-                /* Close! */
-                delete w;
+                /* Close! Let the unique_ptr go out of scope. */
             } else {
-                this_ptr->add_waitable(w);
+                this_ptr->add_waitable(std::move(w));
             }
         }
     }

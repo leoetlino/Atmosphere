@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstring>
 #include <malloc.h>
+#include <memory>
 
 #include <switch.h>
 #include <stratosphere.hpp>
@@ -103,10 +104,10 @@ int main(int argc, char **argv)
     //auto server_manager = std::make_unique<WaitableManager>(U64_MAX);
         
     /* Create fsp-srv mitm. */
-    ISession<MitMQueryService<FsMitMService>> *fs_query_srv = NULL;
-    MitMServer<FsMitMService> *fs_srv = new MitMServer<FsMitMService>(&fs_query_srv, "fsp-srv", 61);
-    server_manager->add_waitable(fs_srv);
-    server_manager->add_waitable(fs_query_srv);
+    std::unique_ptr<ISession<MitMQueryService<FsMitMService>>> fs_query_srv;
+    auto fs_srv = std::make_unique<MitMServer<FsMitMService>>(&fs_query_srv, "fsp-srv", 61);
+    server_manager->add_waitable(std::move(fs_srv));
+    server_manager->add_waitable(std::move(fs_query_srv));
             
     /* Loop forever, servicing our services. */
     server_manager->process();

@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstring>
 #include <malloc.h>
+#include <memory>
 
 #include <switch.h>
 #include <stratosphere.hpp>
@@ -96,12 +97,12 @@ int main(int argc, char **argv)
     auto server_manager = std::make_unique<WaitableManager>(U64_MAX);
     
     /* Add services to manager. */
-    server_manager->add_waitable(new ServiceServer<ProcessManagerService>("ldr:pm", 1));
-    server_manager->add_waitable(new ServiceServer<ShellService>("ldr:shel", 3));
-    server_manager->add_waitable(new ServiceServer<DebugMonitorService>("ldr:dmnt", 2));
+    server_manager->add_waitable(std::make_unique<ServiceServer<ProcessManagerService>>("ldr:pm", 1));
+    server_manager->add_waitable(std::make_unique<ServiceServer<ShellService>>("ldr:shel", 3));
+    server_manager->add_waitable(std::make_unique<ServiceServer<DebugMonitorService>>("ldr:dmnt", 2));
     if (!kernelAbove300()) {
         /* On 1.0.0-2.3.0, Loader services ldr:ro instead of ro. */
-        server_manager->add_waitable(new ServiceServer<RelocatableObjectsService>("ldr:ro", 0x20));
+        server_manager->add_waitable(std::make_unique<ServiceServer<RelocatableObjectsService>>("ldr:ro", 0x20));
     }
     
     /* Loop forever, servicing our services. */

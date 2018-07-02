@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <switch.h>
 #include <stratosphere.hpp>
 #include "imitmserviceobject.hpp"
@@ -128,7 +129,7 @@ class MitMSession final : public ISession<T> {
                                 Reboot();
                             }
                             
-                            MitMSession<T> *new_sess = new MitMSession<T>((MitMServer<T> *)this->server, s_h, c_h, cur_out_r.Handles[0]);
+                            auto new_sess = std::make_unique<MitMSession<T>>((MitMServer<T> *)this->server, s_h, c_h, cur_out_r.Handles[0]);
                             new_sess->service_object = this->service_object;
 
                             if (this->is_domain) {
@@ -138,7 +139,7 @@ class MitMSession final : public ISession<T> {
                                 new_sess->forward_service.type = this->forward_service.type;
                                 new_sess->forward_service.object_id = this->forward_service.object_id;
                             }
-                            this->get_manager()->add_waitable(new_sess);
+                            this->get_manager()->add_waitable(std::move(new_sess));
                             ipcSendHandleMove(&c, c_h);
                             struct {
                                 u64 magic;

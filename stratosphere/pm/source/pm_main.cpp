@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstring>
 #include <malloc.h>
+#include <memory>
 
 #include <switch.h>
 #include <stratosphere.hpp>
@@ -113,19 +114,16 @@ int main(int argc, char **argv)
     }
     
     /* TODO: What's a good timeout value to use here? */
-    WaitableManager *server_manager = new WaitableManager(U64_MAX);
+    auto server_manager = std::make_unique<WaitableManager>(U64_MAX);
         
     /* TODO: Create services. */
-    server_manager->add_waitable(new ServiceServer<ShellService>("pm:shell", 3));
-    server_manager->add_waitable(new ServiceServer<DebugMonitorService>("pm:dmnt", 2));
-    server_manager->add_waitable(new ServiceServer<BootModeService>("pm:bm", 5));
-    server_manager->add_waitable(new ServiceServer<InformationService>("pm:info", 1));
+    server_manager->add_waitable(std::make_unique<ServiceServer<ShellService>>("pm:shell", 3));
+    server_manager->add_waitable(std::make_unique<ServiceServer<DebugMonitorService>>("pm:dmnt", 2));
+    server_manager->add_waitable(std::make_unique<ServiceServer<BootModeService>>("pm:bm", 5));
+    server_manager->add_waitable(std::make_unique<ServiceServer<InformationService>>("pm:info", 1));
     
     /* Loop forever, servicing our services. */
     server_manager->process();
-    
-    /* Cleanup. */
-    delete server_manager;
-	return 0;
+    return 0;
 }
 

@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstring>
 #include <malloc.h>
+#include <memory>
 
 #include <switch.h>
 #include <stratosphere.hpp>
@@ -50,10 +51,10 @@ int main(int argc, char **argv)
     consoleDebugInit(debugDevice_SVC);
     
     /* TODO: What's a good timeout value to use here? */
-    WaitableManager *server_manager = new WaitableManager(U64_MAX);
+    auto server_manager = std::make_unique<WaitableManager>(U64_MAX);
         
     /* Create sm:, (and thus allow things to register to it). */
-    server_manager->add_waitable(new ManagedPortServer<UserService>("sm:", 0x40));
+    server_manager->add_waitable(std::make_unique<ManagedPortServer<UserService>>("sm:", 0x40));
         
     /* Create sm:m manually. */
     Handle smm_h;
@@ -62,13 +63,10 @@ int main(int argc, char **argv)
         while (1) { }
     }
     
-    server_manager->add_waitable(new ExistingPortServer<ManagerService>(smm_h, 1));
+    server_manager->add_waitable(std::make_unique<ExistingPortServer<ManagerService>>(smm_h, 1));
     
     /* Loop forever, servicing our services. */
     server_manager->process();
-    
-    /* Cleanup. */
-    delete server_manager;
 	return 0;
 }
 

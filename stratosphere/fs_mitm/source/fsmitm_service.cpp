@@ -69,7 +69,7 @@ Result FsMitMService::handle_deferred() {
 
 /* Add redirection for RomFS to the SD card. */
 std::tuple<Result, OutSession<IStorageInterface>> FsMitMService::open_data_storage_by_current_process() {
-    IPCSession<IStorageInterface> *out_session = NULL;
+    std::unique_ptr<IPCSession<IStorageInterface>> out_session;
     std::shared_ptr<IStorageInterface> out_storage = nullptr;
     u32 out_domain_id = 0;
     Result rc;
@@ -81,7 +81,7 @@ std::tuple<Result, OutSession<IStorageInterface>> FsMitMService::open_data_stora
         }
         if (R_SUCCEEDED(rc)) {
             out_storage = this->romfs_storage;
-            out_session = new IPCSession<IStorageInterface>(out_storage);
+            out_session = std::make_unique<IPCSession<IStorageInterface>>(out_storage);
         }
     } else {
         FsStorage data_storage;
@@ -104,22 +104,22 @@ std::tuple<Result, OutSession<IStorageInterface>> FsMitMService::open_data_stora
                 out_storage = std::make_shared<IStorageInterface>(new LayeredRomFS(std::make_shared<RomInterfaceStorage>(data_storage), nullptr, this->title_id));
             }
             this->romfs_storage = out_storage;
-            out_session = new IPCSession<IStorageInterface>(out_storage);
-            if (this->get_owner() == NULL) {
-                FsMitMWorker::AddWaitable(out_session);
-            }
+            out_session = std::make_unique<IPCSession<IStorageInterface>>(out_storage);
         }
     }
     
-    OutSession out_s = OutSession(out_session);
+    OutSession out_s = OutSession(out_session.get());
     out_s.domain_id = out_domain_id;
+    if (out_session && !this->get_owner()) {
+        FsMitMWorker::AddWaitable(std::move(out_session));
+    }
     return {rc, out_s};
 }
 
 /* Add redirection for System Data Archives to the SD card. */
 std::tuple<Result, OutSession<IStorageInterface>> FsMitMService::open_data_storage_by_data_id(u64 sid, u64 data_id) {
     FsStorageId storage_id = (FsStorageId)sid;
-    IPCSession<IStorageInterface> *out_session = NULL;
+    std::unique_ptr<IPCSession<IStorageInterface>> out_session;
     FsStorage data_storage;
     FsFile data_file;
     u32 out_domain_id = 0;
@@ -135,16 +135,16 @@ std::tuple<Result, OutSession<IStorageInterface>> FsMitMService::open_data_stora
     if (R_SUCCEEDED(rc)) {
         /* TODO: Is there a sensible path that ends in ".romfs" we can use?" */
         if (R_SUCCEEDED(Utils::OpenSdFileForAtmosphere(data_id, "romfs.bin", FS_OPEN_READ, &data_file))) {
-            out_session = new IPCSession<IStorageInterface>(std::make_shared<IStorageInterface>(new LayeredRomFS(std::make_shared<RomInterfaceStorage>(data_storage), std::make_shared<RomFileStorage>(data_file), data_id)));
+            out_session = std::make_unique<IPCSession<IStorageInterface>>(std::make_shared<IStorageInterface>(new LayeredRomFS(std::make_shared<RomInterfaceStorage>(data_storage), std::make_shared<RomFileStorage>(data_file), data_id)));
         } else {
-            out_session = new IPCSession<IStorageInterface>(std::make_shared<IStorageInterface>(new LayeredRomFS(std::make_shared<RomInterfaceStorage>(data_storage), nullptr, data_id)));
-        }
-        if (this->get_owner() == NULL) {
-            FsMitMWorker::AddWaitable(out_session);
+            out_session = std::make_unique<IPCSession<IStorageInterface>>(std::make_shared<IStorageInterface>(new LayeredRomFS(std::make_shared<RomInterfaceStorage>(data_storage), nullptr, data_id)));
         }
     }
     
-    OutSession out_s = OutSession(out_session);
+    OutSession out_s = OutSession(out_session.get());
     out_s.domain_id = out_domain_id;
+    if (out_session && !this->get_owner()) {
+        FsMitMWorker::AddWaitable(std::move(out_session));
+    }
     return {rc, out_s};
 }

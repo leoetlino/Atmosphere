@@ -24,16 +24,17 @@ class MultiThreadedWaitableManager : public WaitableManager {
                 threads[i] = {0};
                 threadCreate(&threads[i], &MultiThreadedWaitableManager::thread_func, this, ss, prio, cpuid);
             }
-            new_waitable_event = new SystemEvent(this, &MultiThreadedWaitableManager::add_waitable_callback);
-            this->waitables.push_back(new_waitable_event);
+            auto waitable_event = std::make_unique<SystemEvent>(this, &MultiThreadedWaitableManager::add_waitable_callback);
+            this->new_waitable_event = waitable_event.get();  /* Owned by this->waitables. */
+            this->waitables.push_back(std::move(waitable_event));
         }
         ~MultiThreadedWaitableManager() override {
             /* TODO: Exit the threads? */
         }
         
-        IWaitable *get_waitable();
+        std::unique_ptr<IWaitable> get_waitable();
         
-        void add_waitable(IWaitable *waitable) override;
+        void add_waitable(std::unique_ptr<IWaitable> waitable) override;
         void process() override;
         void process_until_timeout() override;
         

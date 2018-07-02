@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <switch.h>
 
 #include "waitablemanagerbase.hpp"
@@ -40,7 +41,7 @@ class IWaitable {
             this->is_deferred = d;
         }
         
-        static bool compare(IWaitable *a, IWaitable *b) {
+        static bool compare(const std::unique_ptr<IWaitable> &a, std::unique_ptr<IWaitable> &b) {
             return (a->wait_priority < b->wait_priority) && !a->is_deferred;
         }
 };

@@ -9,6 +9,7 @@
 static ProcessList g_process_list;
 static ProcessList g_dead_process_list;
 
+/* Owned by the process list waitable manager. */
 static SystemEvent *g_process_launch_start_event = NULL;
 static HosSemaphore g_sema_finish_launch;
 
@@ -310,7 +311,7 @@ void Registration::FinalizeExitedProcess(std::shared_ptr<Registration::Process> 
 void Registration::AddProcessToList(std::shared_ptr<Registration::Process> process) {
     auto auto_lock = GetProcessListUniqueLock();
     g_process_list.processes.push_back(process);
-    g_process_list.get_manager()->add_waitable(new ProcessWaiter(process));
+    g_process_list.get_manager()->add_waitable(std::make_unique<ProcessWaiter>(process));
 }
 
 void Registration::RemoveProcessFromList(u64 pid) {
